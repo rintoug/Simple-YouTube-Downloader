@@ -2,19 +2,27 @@
 require_once "class.youtube.php";
 $yt  = new YouTubeDownloader();
 $downloadLinks ='';
+$error='';
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
     $videoLink = $_POST['video_link'];
     $vid = $yt->getYouTubeCode($videoLink);
     if($vid) {
         $result = $yt->processVideo($vid);
-        //print_r($result);
-        $info = $result['info'];
-        $downloadLinks = $result['videos'];
 
-        $videoInfo = json_decode($info['player_response']);
+        if($result) {
+            //print_r($result);
+            $info = $result['info'];
+            $downloadLinks = $result['videos'];
 
-        $title = $videoInfo->videoDetails->title;
-        $thumbnail = $videoInfo->videoDetails->thumbnail->thumbnails{0}->url;
+            $videoInfo = json_decode($info['player_response']);
+
+            $title = $videoInfo->videoDetails->title;
+            $thumbnail = $videoInfo->videoDetails->thumbnail->thumbnails{0}->url;
+        }
+        else {
+            $error = "Something went wrong";
+        }
+
     }
 }
 ?>
@@ -51,6 +59,10 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             </div><!-- .row -->
         </form>
+
+        <?php if($error) :?>
+            <div style="color:red;font-weight: bold;text-align: center"><?php print $error?></div>
+        <?php endif;?>
 
         <?php if($downloadLinks):?>
         <div class="row formSmall">

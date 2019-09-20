@@ -28,7 +28,20 @@ Class YouTubeDownloader {
 
     public function processVideo($vid) {
         parse_str(file_get_contents("https://youtube.com/get_video_info?video_id=".$vid),$info);
-        if(!empty($info) && $info['status'] == 'ok') {
+
+
+
+        $playabilityJson = json_decode($info['player_response']);
+        $IsPlayable = $playabilityJson->playabilityStatus->status;
+
+        //writing to log file
+        if($IsPlayable != 'OK') {
+            $log = date("c")." ".$info['player_response']."\n";
+            file_put_contents('./video.log', $log, FILE_APPEND);
+        }
+
+
+        if(!empty($info) && $info['status'] == 'ok' && $IsPlayable == 'OK') {
             $streams = $info['url_encoded_fmt_stream_map']; // Fetch all available streams
             $streams = explode(',',$streams);
             $videoOptions = array();
