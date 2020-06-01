@@ -1,17 +1,22 @@
 <?php
 $downloadURL = urldecode($_GET['link']);
+//print  $downloadURL;exit;
 $type = urldecode($_GET['type']);
 $title = urldecode($_GET['title']);
 
-$fileName = $title.'.'.$type;
-//exit;
-if(!empty($downloadURL)){
-    // Define headers
+//Finding file extension from the mime type
+$typeArr = explode("/",$type);
+$extension = $typeArr[1];
+
+$fileName = $title.'.'.$extension;
+
+
+if (!empty($downloadURL)) {
     header("Cache-Control: public");
     header("Content-Description: File Transfer");
-    header("Content-Disposition: attachment; filename=$fileName");
+    header("Content-Disposition: attachment;filename=\"$fileName\"");
     header("Content-Transfer-Encoding: binary");
 
-    // Read the file
     readfile($downloadURL);
+
 }
