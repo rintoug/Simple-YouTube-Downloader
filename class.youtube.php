@@ -31,7 +31,8 @@ Class YouTubeDownloader {
 
 
         $playabilityJson = json_decode($info['player_response']);
-        $adaptiveFormats = $playabilityJson->streamingData->formats;
+        $formats = $playabilityJson->streamingData->formats;
+        $adaptiveFormats = $playabilityJson->streamingData->adaptiveFormats;
 
         //Checking playable or not
         $IsPlayable = $playabilityJson->playabilityStatus->status;
@@ -61,7 +62,29 @@ Class YouTubeDownloader {
                 $videoOptions[$i]['quality'] = $qualityLabel;
                 $i++;
             }
-            $result = array('info'=>$info,'videos'=>$videoOptions);
+            $j=0;
+            foreach($formats as $stream) {
+
+                $streamUrl = $stream->url;
+                $type = explode(";", $stream->mimeType);
+
+                $qualityLabel='';
+                if(!empty($stream->qualityLabel)) {
+                    $qualityLabel = $stream->qualityLabel;
+                }
+
+                $videoOptionsOrg[$j]['link'] = $streamUrl;
+                $videoOptionsOrg[$j]['type'] = $type[0];
+                $videoOptionsOrg[$j]['quality'] = $qualityLabel;
+                $j++;
+            }
+            $result['videos'] = array(
+                'info'=>$info,
+                'adapativeFormats'=>$videoOptions,
+                'formats'=>$videoOptionsOrg
+            );
+            
+            
             return $result;
         }
         else {

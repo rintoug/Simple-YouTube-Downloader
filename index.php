@@ -9,11 +9,14 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         $vid = $yt->getYouTubeCode($videoLink);
         if($vid) {
             $result = $yt->processVideo($vid);
-
+            
             if($result) {
                 //print_r($result);
-                $info = $result['info'];
-                $downloadLinks = $result['videos'];
+                $info = $result['videos']['info'];
+                $formats = $result['videos']['formats'];
+                $adapativeFormats = $result['videos']['adapativeFormats'];
+
+                
 
                 $videoInfo = json_decode($info['player_response']);
 
@@ -37,9 +40,14 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Download YouTube video</title>
+    <!-- Font-->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400&display=swap" rel="stylesheet">
     <!-- Bootstrap core CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.css" rel="stylesheet">
     <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+        }
         .formSmall {
             width: 700px;
             margin: 20px auto 20px auto;
@@ -69,7 +77,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div style="color:red;font-weight: bold;text-align: center"><?php print $error?></div>
         <?php endif;?>
 
-        <?php if($downloadLinks):?>
+        <?php if($formats):?>
         <div class="row formSmall">
             <div class="col-lg-3">
                 <img src="<?php print $thumbnail?>">
@@ -79,20 +87,49 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
 
-        <table class="table formSmall">
-            <tr>
-                <td>Type</td>
-                <td>Quality</td>
-                <td>Download</td>
-            </tr>
-            <?php foreach ($downloadLinks as $video) :?>
-                <tr>
-                    <td><?php print $video['type']?></td>
-                    <td><?php print $video['quality']?></td>
-                    <td><a href="downloader.php?link=<?php print urlencode($video['link'])?>&title=<?php print urlencode($title)?>&type=<?php print urlencode($video['type'])?>">Download</a> </td>
-                </tr>
-            <?php endforeach;?>
-        </table>
+        <div class="card formSmall">
+            <div class="card-header">
+                <strong>With Video & Sound</strong>
+            </div>
+            <div class="card-body">
+                <table class="table ">
+                    <tr>
+                        <td>Type</td>
+                        <td>Quality</td>
+                        <td>Download</td>
+                    </tr>
+                    <?php foreach ($formats as $video) :?>
+                        <tr>
+                            <td><?php print $video['type']?></td>
+                            <td><?php print $video['quality']?></td>
+                            <td><a href="downloader.php?link=<?php print urlencode($video['link'])?>&title=<?php print urlencode($title)?>&type=<?php print urlencode($video['type'])?>">Download</a> </td>
+                        </tr>
+                    <?php endforeach;?>
+                </table>
+            </div>
+        </div>
+
+        <div class="card formSmall">
+            <div class="card-header">
+                <strong>Videos video only/ Audios audio only</strong>
+            </div>
+            <div class="card-body">
+                <table class="table ">
+                    <tr>
+                        <td>Type</td>
+                        <td>Quality</td>
+                        <td>Download</td>
+                    </tr>
+                    <?php foreach ($adapativeFormats as $video) :?>
+                        <tr>
+                            <td><?php print $video['type']?></td>
+                            <td><?php print $video['quality']?></td>
+                            <td><a href="downloader.php?link=<?php print urlencode($video['link'])?>&title=<?php print urlencode($title)?>&type=<?php print urlencode($video['type'])?>">Download</a> </td>
+                        </tr>
+                    <?php endforeach;?>
+                </table>
+            </div>
+        </div>
         <?php endif;?>
     </div>
 </body>
