@@ -31,7 +31,7 @@ Class YouTubeDownloader {
 
 
         $playabilityJson = json_decode($info['player_response']);
-        $adaptiveFormats = $playabilityJson->streamingData->adaptiveFormats;
+        $adaptiveFormats = $playabilityJson->streamingData->formats;
 
         //Checking playable or not
         $IsPlayable = $playabilityJson->playabilityStatus->status;
