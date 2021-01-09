@@ -77,7 +77,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div style="color:red;font-weight: bold;text-align: center"><?php print $error?></div>
         <?php endif;?>
 
-        <?php if($formats):?>
+        <?php if(!empty($formats)):?>
         <div class="row formSmall">
             <div class="col-lg-3">
                 <img src="<?php print $thumbnail?>">
